@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavFood</title>
+    <img src="Logo JavFood .png" alt="Logo" width="100">
+
+    <style>
+        * {
+            font-family: Arial, sans-serif;
+        }
+
+        /* NAVBAR */
+        nav {
+            background: #ffcc00;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            font-weight: bold;
+            color: #333;
+            cursor: pointer;
+        }
+
+        /* GRID MENU 2 × 2 */
+        .menu-category {
+            display: none;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .card {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            border-radius: 10px;
+            background: white;
+        }
+
+        /* Default kategori pertama */
+        #burger { display: grid; }
+        #title-burger { display: block; }
+
+        /* TOMBOL PESAN */
+        .btn-pesan {
+            background: #ff9900;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .btn-pesan:hover { background: #e68a00; }
+        .btn-pesan:active { transform: scale(0.95); }
+
+        /* TOMBOL KERANJANG */
+        #cart-box {
+            background: #ffe680;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* TOMBOL CHECKOUT */
+        #checkout-btn {
+            display: none;
+            margin: 20px;
+            padding: 12px;
+            background: green;
+            color: white;
+            border: none;
+            width: 90%;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #checkout-btn:hover {
+            background: #0f7a0f;
+        }
+
+        /* Tombol lihat keranjang */
+        #lihat-keranjang-btn {
+            background: #e68a00;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 10px;
+            margin: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        #lihat-keranjang-btn:hover {
+            background: #e68a00;
+        }
+
+        /* Popup keranjang */
+        #cart-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 350px;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.3);
+            z-index: 9999;
+        }
+
+        .cart-item {
+            background: #f3f3f3;
+            padding: 8px 12px;
+            border-radius: 10px;
+            margin: 5px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-btn {
+            width: 100%;
+            background: red;
+            color: white;
+            padding: 10px;
+            border: none;
+            margin-top: 10px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        nav {
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        #cart-popup {
+            position: fixed;
+            z-index: 99999;   /* Popup paling atas */
+        }
+
+        #lihat-keranjang-btn {
+            position: absolute;
+            top: 180px; 
+            right: 20px;
+            z-index: 100000;
+            background: #e68a00;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav>
+        <h1>JavFood</h1>
+        <button id="cart-box" onclick="openCart()">Keranjang: <span id="cart-count">0</span></button>
+
+        <ul>
+            <li><a onclick="showCategory('burger')">Burger</a></li>
+            <li><a onclick="showCategory('ayam')">Ayam</a></li>
+            <li><a onclick="showCategory('minum')">Minuman</a></li>
+        </ul>
+    </nav>
+
+        
+        <body>
+        <!-- HTML tombol -->
+        <button id="lihat-keranjang-btn" onclick="openCart()">Lihat Keranjang</button>
+        </body>
+
+    <!-- CONTENT -->
+    <div class="container">
+
+        <!-- Heading kategori -->
+        <h2 id="title-burger">Menu Burger</h2>
+        <h2 id="title-ayam" style="display:none;">Menu Ayam</h2>
+        <h2 id="title-minum" style="display:none;">Menu Minuman</h2>
+
+        <!-- Burger -->
+        <div class="menu-category" id="burger">
+
+            <div class="card">
+                <img src="cheeseburger.jpg.JPG" width="150">
+                <h3>Cheese Burger</h3>
+                <p>Rp 28.000</p>
+                <button class="btn-pesan" onclick="addToCart('Cheese Burger', 28000)">Pesan</button>
+            </div>
+
+            <div class="card">
+                <img src="beefburger.JPG" width="150">
+                <h3>Beef Burger</h3>
+                <p>Rp 25.000</p>
+                <button class="btn-pesan" onclick="addToCart('Beef Burger', 25000)">Pesan</button>
+            </div>
+
+            <div class="card">
+                <img src="chickenburger.JPG" width="150">
+                <h3>Chicken Burger</h3>
+                <p>Rp 20.000</p>
+                <button class="btn-pesan" onclick="addToCart('Chicken Burger', 20000)">Pesan</button>
+            </div>
+
+            <div class="card">
+                <img src="baconburger.JPG" width="150">
+                <h3>Bacon Burger</h3>
+                <p>Rp 30.000</p>
+                <button class="btn-pesan" onclick="addToCart('Bacon Burger', 30000)">Pesan</button>
+            </div>
+        </div>
+
+        <!-- Ayam -->
+        <div class="menu-category" id="ayam">
+            <div class="card">
+                <img src="chicken.JPG" width="150">
+                <h3>Ayam Crispy</h3>
+                <p>Rp 18.000</p>
+                <button class="btn-pesan" onclick="addToCart('Ayam Crispy', 18000)">Pesan</button>
+            </div>
+
+            <div class="card">
+                <img src="koreanspicy.JPG" width="150">
+                <h3>Korean Spicy</h3>
+                <p>Rp 22.000</p>
+                <button class="btn-pesan" onclick="addToCart('Korean Spicy', 22000)">Pesan</button>
+            </div>
+
+            <div class="card">
+                <img src="honeybutter.JPG" width="150">
+                <h3>Honey Butter</h3>
+                <p>Rp 25.000</p>
+                <button class="btn-pesan" onclick="addToCart('Honey Butter', 25000)">Pesan</button>
+            </div>
+
+            <div class="card">
+                <img src="hotspicy.JPG" width="150">
+                <h3>Hot Spicy</h3>
+                <p>Rp 20.000</p>
+                <button class="btn-pesan" onclick="addToCart('Hot Spicy', 20000)">Pesan</button>
+            </div>
+        </div>
+
+        <!-- Minuman -->
+        <div class="menu-category" id="minum">
+
+            <div class="card">
+                <img src="lemontea.jpg.JPG" width="150">
+                <h3>Lemon Tea</h3>
+                <p>Rp 10.000</p>
+                <button class="btn-pesan" onclick="addToCart('Lemon Tea', 10000)">Pesan</button>
+            </div>
+
+            <div class="card">
+                <img src="chocolate.jpg.JPG" width="150">
+                <h3>Chocolate Drink</h3>
+                <p>Rp 12.000</p>
+                <button class="btn-pesan" onclick="addToCart('Chocolate Drink', 12000)">Pesan</button>
+            </div>
+
+            <div class="card">
+                <img src="spirite.jpg.JPG" width="150">
+                <h3>Sprite</h3>
+                <p>Rp 9.000</p>
+                <button class="btn-pesan" onclick="addToCart('Sprite', 9000)">Pesan</button>
+            </div>
+
+            <div class="card">
+                <img src="cocacola.jpg.JPG" width="150">
+                <h3>Coca Cola</h3>
+                <p>Rp 9.000</p>
+                <button class="btn-pesan" onclick="addToCart('Coca Cola', 9000)">Pesan</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Button checkout -->
+    <button id="checkout-btn" onclick="checkout()">Checkout via WhatsApp</button>
+
+    <script>
+        let keranjang = [];
+
+        function showCategory(category) {
+
+            document.querySelectorAll('.menu-category').forEach(cat => {
+                cat.style.display = "none";
+            });
+
+            document.querySelectorAll('h2[id^="title"]').forEach(title => {
+                title.style.display = "none";
+            });
+
+            document.getElementById(category).style.display = "grid";
+            document.getElementById("title-" + category).style.display = "block";
+        }
+
+        function addToCart(itemName, itemPrice) {
+            // Cek apakah item sudah ada, jika ya tambahkan quantity
+            let existing = keranjang.find(i => i.name === itemName);
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                keranjang.push({ name: itemName, price: itemPrice, quantity: 1 });
+            }
+
+            document.getElementById("cart-count").textContent = keranjang.length;
+            alert(itemName + " ditambahkan ke keranjang!");
+
+            if (keranjang.length > 0) {
+                document.getElementById("checkout-btn").style.display = "block";
+            }
+        }
+
+        function checkout() {
+            if (keranjang.length === 0) return alert("Keranjang kosong!");
+
+            let nomor = "6281234567890";  
+            let pesan = "Halo, saya ingin pesan:\n\n";
+
+            let totalKeseluruhan = 0;
+            keranjang.forEach((item, i) => {
+                let subtotal = item.price * item.quantity;
+                totalKeseluruhan += subtotal;
+                pesan += (i + 1) + ". " + item.name + " - Rp " + item.price.toLocaleString() + " x " + item.quantity + " = Rp " + subtotal.toLocaleString() + "\n";
+            });
+
+            pesan += "\nTotal: Rp " + totalKeseluruhan.toLocaleString();
+
+            window.open("https://wa.me/" + nomor + "?text=" + encodeURIComponent(pesan));
+        }
+
+        function openCart() {
+            let list = document.getElementById("cart-list");
+            list.innerHTML = "";
+
+            if (keranjang.length === 0) {
+                list.innerHTML = "<p>Keranjang masih kosong.</p>";
+            } else {
+                keranjang.forEach((item, index) => {
+                    let total = item.price * item.quantity;
+                    list.innerHTML += `
+                        <div class="cart-item">
+                            ${item.name} - Rp ${item.price.toLocaleString()} x ${item.quantity} = Rp ${total.toLocaleString()}
+                            <button onclick="hapusItem(${index})" 
+                                style="background:red;color:white;border:none;border-radius:6px;padding:4px 8px;cursor:pointer;">
+                                X
+                            </button>
+                        </div>`;
+                });
+            }
+
+            document.getElementById("cart-popup").style.display = "block";
+        }
+
+        function closeCart() {
+            document.getElementById("cart-popup").style.display = "none";
+        }
+
+        function hapusItem(i) {
+            keranjang.splice(i, 1);
+            document.getElementById("cart-count").textContent = keranjang.length;
+
+            if (keranjang.length === 0) {
+                document.getElementById("checkout-btn").style.display = "none";
+            }
+
+            openCart(); // Refresh tampilan
+        }
+
+        </script>
+
+        <!-- POPUP KERANJANG -->
+        <div id="cart-popup">
+            <h3 style="text-align:center; margin-top:0;">Keranjang Belanja</h3>
+            <div id="cart-list"></div>
+            <button class="close-btn" onclick="closeCart()">Tutup</button>
+        </div>
+
+</body>
+</html>
